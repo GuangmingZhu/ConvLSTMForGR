@@ -1,5 +1,5 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import io
 import sys
 sys.path.append("./networks")
@@ -10,12 +10,13 @@ l2=keras.regularizers.l2
 K=tf.contrib.keras.backend
 import inputs as data
 from res3d_cgru_mobilenet import res3d_cgru_mobilenet
-from datagen import isoTestImageGenerator,jesterTestImageGenerator
+from datagen import jesterTestImageGenerator
+from datagen import isoTestImageGenerator
 from datetime import datetime
 
-# Used ConvLSTM Type
+# Used ConvGRU Type
 SEPARABLE = 0
-GROUP = 1
+#GROUP = 1  # Not Implemented
 SHUFFLE = 2
 GATED = 3
 

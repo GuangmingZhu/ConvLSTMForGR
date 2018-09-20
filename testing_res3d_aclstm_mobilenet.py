@@ -10,7 +10,7 @@ l2=keras.regularizers.l2
 K=tf.contrib.keras.backend
 import inputs as data
 from res3d_aclstm_mobilenet import res3d_aclstm_mobilenet
-from datagen import isoTestImageGenerator,jesterTestImageGenerator
+from datagen import isoTestImageGenerator
 from datetime import datetime
 
 # Used ConvLSTM Type
