@@ -22,23 +22,30 @@ ATTENTIONO = 2
 
 # Modality
 RGB = 0
-#Depth = 1
-#Flow = 2
+Depth = 1 
+Flow = 2
 
 cfg_type = ATTENTIONX
 cfg_modality = RGB
+if cfg_modality==RGB:
+  str_modality = 'rgb'
+elif cfg_modality==Depth:
+  str_modality = 'depth'
+elif cfg_modality==Flow:
+  str_modality = 'flow'
+
 
 nb_epoch = 20
 init_epoch = 0
 seq_len = 32
 batch_size = 8
 num_classes = 249
-training_datalist = './dataset_splits/IsoGD/train_rgb_list.txt'
-testing_datalist = './dataset_splits/IsoGD/valid_rgb_list.txt'
+training_datalist = './dataset_splits/IsoGD/train_%s_list.txt'%str_modality
+testing_datalist = './dataset_splits/IsoGD/valid_%s_list.txt'%str_modality
 weight_decay = 0.00005
 model_prefix = '/raid/gmzhu/tensorflow/ConvLSTMForGR/models/'
 
-dataset_name = 'isogr_rgb'
+dataset_name = 'isogr_%s'%str_modality
 weights_file = '%s/%s_weights.{epoch:02d}-{val_loss:.2f}.h5'%(model_prefix,dataset_name)
   
 _,train_labels = data.load_iso_video_list(training_datalist)

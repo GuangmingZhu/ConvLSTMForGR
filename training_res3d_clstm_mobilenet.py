@@ -35,24 +35,31 @@ cfg_type = GATED
 cfg_modality = RGB
 cfg_dataset = ISOGD
 
+if cfg_modality==RGB:
+  str_modality = 'rgb'
+elif cfg_modality==Depth:
+  str_modality = 'depth'
+elif cfg_modality==Flow:
+  str_modality = 'flow'
+
 if cfg_dataset==JESTER:
   nb_epoch = 30
   init_epoch = 0
   seq_len = 16
   batch_size = 16
   num_classes = 27
-  dataset_name = 'jester'
-  training_datalist = './dataset_splits/Jester/train_rgb_list.txt'
-  testing_datalist = './dataset_splits/Jester/valid_rgb_list.txt'
+  dataset_name = 'jester_%s'%str_modality
+  training_datalist = './dataset_splits/Jester/train_%s_list.txt'%str_modality
+  testing_datalist = './dataset_splits/Jester/valid_%s_list.txt'%str_modality
 elif cfg_dataset==ISOGD:
   nb_epoch = 20
   init_epoch = 0
   seq_len = 32
   batch_size = 8
   num_classes = 249
-  dataset_name = 'isogd'
-  training_datalist = './dataset_splits/IsoGD/train_rgb_list.txt'
-  testing_datalist = './dataset_splits/IsoGD/valid_rgb_list.txt'
+  dataset_name = 'isogr_%s'%str_modality
+  training_datalist = './dataset_splits/IsoGD/train_%s_list.txt'%str_modality
+  testing_datalist = './dataset_splits/IsoGD/valid_%s_list.txt'%str_modality
 
 weight_decay = 0.00005
 model_prefix = '/raid/gmzhu/tensorflow/ConvLSTMForGR/models/'
