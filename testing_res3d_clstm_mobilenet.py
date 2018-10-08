@@ -32,6 +32,7 @@ ISOGD = 1
 cfg_type = GATED
 cfg_modality = RGB
 cfg_dataset = ISOGD
+cfg_pyramid = False
 
 if cfg_modality==RGB:
   str_modality = 'rgb'
@@ -54,9 +55,16 @@ elif cfg_dataset==ISOGD:
 weight_decay = 0.00005
 model_prefix = '/raid/gmzhu/tensorflow/ConvLSTMForGR/models/'
   
-inputs = keras.layers.Input(shape=(seq_len, 112, 112, 3),
-                            batch_shape=(batch_size, seq_len, 112, 112, 3))
+if cfg_pyramid==True:
+  inputs = keras.layers.Input(shape=(seq_len, 112, 112, 3), batch_shape=(batch_size*4, seq_len, 112, 112, 3))
+else:
+  inputs = keras.layers.Input(shape=(seq_len, 112, 112, 3), batch_shape=(batch_size, seq_len, 112, 112, 3))
 feature = res3d_clstm_mobilenet(inputs, seq_len, weight_decay, cfg_type)
+# Pyramid Pooling
+if cfg_pyramid==True:
+  feature = keras.layers.Reshape((4,1024), name='Pyramid_reshape')(feature)
+  feature = keras.layers.AveragePooling1D(pool_size=4, strides=4, name='Pyramid_Pooling')(feature)
+
 flatten = keras.layers.Flatten(name='Flatten')(feature)
 classes = keras.layers.Dense(num_classes, activation='linear', kernel_initializer='he_normal',
                     kernel_regularizer=l2(weight_decay), name='Classes')(flatten)

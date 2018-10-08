@@ -4,6 +4,8 @@ keras=tf.contrib.keras
 import inputs as data
 import threading
 
+USING_PYRAMID_INPUT = False
+
 ## Iteration
 def minibatches(inputs=None, targets=None, batch_size=None, shuffle=False):
   assert len(inputs) == len(targets)
@@ -58,6 +60,38 @@ def isoTrainImageGenerator(filepath, batch_size, seq_len, num_classes, modality)
       for data_a in range(batch_size):
         X_index_a = X_indices[data_a]
         key_str = '%06d' % X_index_a
+        if USING_PYRAMID_INPUT==True:
+          framecnt = X_train[key_str]['framecnt']
+          if framecnt<=seq_len:
+            for pid in range(3):
+              image_path.append(X_train[key_str]['videopath'])
+              image_fcnt.append(X_train[key_str]['framecnt'])
+              image_olen.append(seq_len)
+              image_start.append(1)
+              is_training.append(True) # Training
+          elif framecnt<seq_len*3:
+            image_path.append(X_train[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(1)
+            is_training.append(True) # Training
+            image_path.append(X_train[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt/2-seq_len/2+1)
+            is_training.append(True) # Training
+            image_path.append(X_train[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt-seq_len+1)
+            is_training.append(True) # Training
+          else:
+            for pid in range(3):
+              image_path.append(X_train[key_str]['videopath'])
+              image_fcnt.append(framecnt/3)
+              image_olen.append(seq_len)
+              image_start.append(framecnt*pid/3+1)
+              is_training.append(True) # Training
         image_path.append(X_train[key_str]['videopath'])
         image_fcnt.append(X_train[key_str]['framecnt'])
         image_olen.append(seq_len)
@@ -90,6 +124,38 @@ def isoTestImageGenerator(filepath, batch_size, seq_len, num_classes, modality):
       for data_a in range(batch_size):
         X_index_a = X_indices[data_a]
         key_str = '%06d' % X_index_a
+        if USING_PYRAMID_INPUT==True:
+          framecnt = X_test[key_str]['framecnt']
+          if framecnt<=seq_len:
+            for pid in range(3):
+              image_path.append(X_test[key_str]['videopath'])
+              image_fcnt.append(X_test[key_str]['framecnt'])
+              image_olen.append(seq_len)
+              image_start.append(1)
+              is_training.append(False) # Testing
+          elif framecnt<seq_len*3:
+            image_path.append(X_test[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(1)
+            is_training.append(False) # Testing
+            image_path.append(X_test[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt/2-seq_len/2+1)
+            is_training.append(False) # Testing
+            image_path.append(X_test[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt-seq_len+1)
+            is_training.append(False) # Testing
+          else:
+            for pid in range(3):
+              image_path.append(X_test[key_str]['videopath'])
+              image_fcnt.append(framecnt/3)
+              image_olen.append(seq_len)
+              image_start.append(framecnt*pid/3+1)
+              is_training.append(False) # Testing
         image_path.append(X_test[key_str]['videopath'])
         image_fcnt.append(X_test[key_str]['framecnt'])
         image_olen.append(seq_len)
@@ -117,15 +183,49 @@ def jesterTrainImageGenerator(filepath, batch_size, seq_len, num_classes, modali
       image_path = []
       image_fcnt = []
       image_olen = []
+      image_start = []
       is_training = []
       for data_a in range(batch_size):
         X_index_a = X_indices[data_a]
         key_str = '%06d' % X_index_a
+        if USING_PYRAMID_INPUT==True:
+          framecnt = X_train[key_str]['framecnt']
+          if framecnt<=seq_len:
+            for pid in range(3):
+              image_path.append(X_train[key_str]['videopath'])
+              image_fcnt.append(X_train[key_str]['framecnt'])
+              image_olen.append(seq_len)
+              image_start.append(1)
+              is_training.append(True) # Training
+          elif framecnt<seq_len*3:
+            image_path.append(X_train[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(1)
+            is_training.append(True) # Training
+            image_path.append(X_train[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt/2-seq_len/2+1)
+            is_training.append(True) # Training
+            image_path.append(X_train[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt-seq_len+1)
+            is_training.append(True) # Training
+          else:
+            for pid in range(3):
+              image_path.append(X_train[key_str]['videopath'])
+              image_fcnt.append(framecnt/3)
+              image_olen.append(seq_len)
+              image_start.append(framecnt*pid/3+1)
+              is_training.append(True) # Training
         image_path.append(X_train[key_str]['videopath'])
         image_fcnt.append(X_train[key_str]['framecnt'])
         image_olen.append(seq_len)
+        image_start.append(1)
         is_training.append(True) # Training
-      image_info = zip(image_path,image_fcnt,image_olen,is_training)
+      image_info = zip(image_path,image_fcnt,image_olen,image_start,is_training)
       if modality==0: #RGB
         X_data_t = threading_data([_ for _ in image_info], data.prepare_jester_rgb_data)
       if modality==2: #Flow
@@ -145,15 +245,49 @@ def jesterTestImageGenerator(filepath, batch_size, seq_len, num_classes, modalit
       image_path = []
       image_fcnt = []
       image_olen = []
+      image_start = []
       is_training = []
       for data_a in range(batch_size):
         X_index_a = X_indices[data_a]
         key_str = '%06d' % X_index_a
+        if USING_PYRAMID_INPUT==True:
+          framecnt = X_test[key_str]['framecnt']
+          if framecnt<=seq_len:
+            for pid in range(3):
+              image_path.append(X_test[key_str]['videopath'])
+              image_fcnt.append(X_test[key_str]['framecnt'])
+              image_olen.append(seq_len)
+              image_start.append(1)
+              is_training.append(False) # Testing
+          elif framecnt<seq_len*3:
+            image_path.append(X_test[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(1)
+            is_training.append(False) # Testing
+            image_path.append(X_test[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt/2-seq_len/2+1)
+            is_training.append(False) # Testing
+            image_path.append(X_test[key_str]['videopath'])
+            image_fcnt.append(seq_len)
+            image_olen.append(seq_len)
+            image_start.append(framecnt-seq_len+1)
+            is_training.append(False) # Testing
+          else:
+            for pid in range(3):
+              image_path.append(X_test[key_str]['videopath'])
+              image_fcnt.append(framecnt/3)
+              image_olen.append(seq_len)
+              image_start.append(framecnt*pid/3+1)
+              is_training.append(False) # Testing
         image_path.append(X_test[key_str]['videopath'])
         image_fcnt.append(X_test[key_str]['framecnt'])
         image_olen.append(seq_len)
+        image_start.append(1)
         is_training.append(False) # Testing
-      image_info = zip(image_path,image_fcnt,image_olen,is_training)
+      image_info = zip(image_path,image_fcnt,image_olen,image_start,is_training)
       if modality==0: #RGB
         X_data_t = threading_data([_ for _ in image_info], data.prepare_jester_rgb_data)
       if modality==2: #Flow

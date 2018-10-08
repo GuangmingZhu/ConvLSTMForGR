@@ -173,7 +173,8 @@ def prepare_jester_rgb_data(image_info):
   video_path = image_info[0]
   video_frame_cnt = image_info[1]
   output_frame_cnt = image_info[2]
-  is_training = image_info[3]
+  start_frame_idx = image_info[3]
+  is_training = image_info[4]
   assert os.path.exists(video_path)
   rand_frames = np.zeros(output_frame_cnt)
   div = float(video_frame_cnt)/float(output_frame_cnt)
@@ -195,7 +196,7 @@ def prepare_jester_rgb_data(image_info):
       rand_frames[::] = div*np.arange(0, output_frame_cnt)
   rand_frames[0] = max(rand_frames[0], 0)
   rand_frames[output_frame_cnt-1] = min(rand_frames[output_frame_cnt-1], video_frame_cnt-1)
-  rand_frames = np.floor(rand_frames)+1
+  rand_frames = np.floor(rand_frames)+start_frame_idx
 
   average_values = [114,109,104]
   processed_images = np.empty((output_frame_cnt, 112, 112, 3), dtype=np.float32)
@@ -220,7 +221,8 @@ def prepare_jester_flow_data(image_info):
   video_path = image_info[0]
   video_frame_cnt = image_info[1]-1
   output_frame_cnt = image_info[2]
-  is_training = image_info[3]
+  start_frame_idx = image_info[3]
+  is_training = image_info[4]
   assert os.path.exists(video_path)
   rand_frames = np.zeros(output_frame_cnt)
   div = float(video_frame_cnt)/float(output_frame_cnt)
@@ -242,7 +244,7 @@ def prepare_jester_flow_data(image_info):
       rand_frames[::] = div*np.arange(0, output_frame_cnt)
   rand_frames[0] = max(rand_frames[0], 0)
   rand_frames[output_frame_cnt-1] = min(rand_frames[output_frame_cnt-1], video_frame_cnt-1)
-  rand_frames = np.floor(rand_frames)+1
+  rand_frames = np.floor(rand_frames)+start_frame_idx
 
   average_values = [128,128,128] 
   processed_images = np.empty((output_frame_cnt, 112, 112, 3), dtype=np.float32)
